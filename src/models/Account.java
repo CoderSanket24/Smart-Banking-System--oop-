@@ -1,11 +1,15 @@
 package models;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import exceptions.InsufficientFundsException;
+import interfaces.Transactional;
+import interfaces.InterestBearing;
+import interfaces.Reportable;
 
-public abstract class Account {
+public abstract class Account implements Transactional, InterestBearing, Reportable {
     protected String accountNumber;
     protected String accountHolderName;
     protected double balance;
@@ -29,11 +33,27 @@ public abstract class Account {
     }
     
     // Abstract methods to be implemented by subclasses
-    public abstract double calculateInterest();
     public abstract String getAccountType();
     public abstract double getMinimumBalance();
     
-    // Common methods
+    // From InterestBearing interface
+    @Override
+    public abstract double calculateInterest();
+    
+    @Override
+    public abstract double getInterestRate();
+    
+    @Override
+    public void creditInterest() {
+        double interest = calculateInterest();
+        if (interest > 0) {
+            balance += interest;
+            addTransaction(new Transaction(accountNumber, "INTEREST_CREDIT", interest, balance, "Monthly interest credit"));
+        }
+    }
+    
+    // From Transactional interface
+    @Override
     public synchronized void deposit(double amount) throws InsufficientFundsException {
         if (amount <= 0) {
             throw new InsufficientFundsException("Deposit amount must be positive");
@@ -45,6 +65,7 @@ public abstract class Account {
         addTransaction(new Transaction(accountNumber, "DEPOSIT", amount, balance));
     }
     
+    @Override
     public synchronized void withdraw(double amount) throws InsufficientFundsException {
         if (amount <= 0) {
             throw new InsufficientFundsException("Withdrawal amount must be positive");
@@ -59,8 +80,40 @@ public abstract class Account {
         addTransaction(new Transaction(accountNumber, "WITHDRAWAL", amount, balance));
     }
     
+    @Override
     public synchronized void addTransaction(Transaction transaction) {
         transactions.add(transaction);
+    }
+    
+    // From Reportable interface
+    @Override
+    public String generateReport() {
+        StringBuilder report = new StringBuilder();
+        report.append(getReportTitle()).append("\n");
+        report.append("=".repeat(50)).append("\n\n");
+        report.append(getFormattedData());
+        return report.toString();
+    }
+    
+    @Override
+    public String getReportTitle() {
+        return "Account Report - " + accountNumber;
+    }
+    
+    @Override
+    public String getFormattedData() {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
+        StringBuilder data = new StringBuilder();
+        data.append("Account Number: ").append(accountNumber).append("\n");
+        data.append("Account Holder: ").append(accountHolderName).append("\n");
+        data.append("Account Type: ").append(getAccountType()).append("\n");
+        data.append("Current Balance: ₹").append(String.format("%.2f", balance)).append("\n");
+        data.append("Status: ").append(status).append("\n");
+        data.append("Created Date: ").append(createdDate.format(formatter)).append("\n");
+        data.append("Total Transactions: ").append(transactions.size()).append("\n");
+        data.append("Minimum Balance: ₹").append(String.format("%.2f", getMinimumBalance())).append("\n");
+        data.append("Interest Rate: ").append(String.format("%.2f%%", getInterestRate() * 100)).append("\n");
+        return data.toString();
     }
     
     // Getters and Setters
@@ -76,6 +129,7 @@ public abstract class Account {
     public LocalDateTime getCreatedDate() { return createdDate; }
     public void setCreatedDate(LocalDateTime createdDate) { this.createdDate = createdDate; }
     
+    @Override
     public List<Transaction> getTransactions() { return new ArrayList<>(transactions); }
     public void setTransactions(List<Transaction> transactions) { this.transactions = transactions; }
     

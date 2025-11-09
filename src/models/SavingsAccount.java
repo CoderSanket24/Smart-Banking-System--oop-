@@ -18,6 +18,11 @@ public class SavingsAccount extends Account {
     }
     
     @Override
+    public double getInterestRate() {
+        return INTEREST_RATE;
+    }
+    
+    @Override
     public String getAccountType() {
         return "SAVINGS";
     }
@@ -27,7 +32,7 @@ public class SavingsAccount extends Account {
         return MINIMUM_BALANCE;
     }
     
-    public static double getInterestRate() {
+    public static double getStaticInterestRate() {
         return INTEREST_RATE;
     }
 }
