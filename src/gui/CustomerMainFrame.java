@@ -39,23 +39,30 @@ public class CustomerMainFrame extends JFrame {
     private void initializeGUI() {
         setTitle("Smart Banking System - Customer Portal");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(1200, 800);  // Bigger window
+        
+        // Make window fullscreen/maximized
+        setExtendedState(JFrame.MAXIMIZED_BOTH);
         setLocationRelativeTo(null);
         
         // Set minimum size
         setMinimumSize(new Dimension(1000, 600));
         
+        // Set modern background color
+        getContentPane().setBackground(new Color(240, 242, 245));
+        
         // Create menu bar
         createMenuBar();
         
-        // Create tabbed pane
+        // Create modern tabbed pane
         tabbedPane = new JTabbedPane();
+        tabbedPane.setFont(new Font("Segoe UI", Font.BOLD, 16));
+        tabbedPane.setBackground(Color.WHITE);
         
-        // Add tabs
-        tabbedPane.addTab("My Accounts", createAccountsPanel());
-        tabbedPane.addTab("Transactions", createTransactionsPanel());
-        tabbedPane.addTab("Transfer Funds", createTransferPanel());
-        tabbedPane.addTab("Account Services", createServicesPanel());
+        // Add tabs with icons
+        tabbedPane.addTab("💳 My Accounts", createAccountsPanel());
+        tabbedPane.addTab("📊 Transactions", createTransactionsPanel());
+        tabbedPane.addTab("💸 Transfer Funds", createTransferPanel());
+        tabbedPane.addTab("⚙️ Account Services", createServicesPanel());
         
         add(tabbedPane);
         
@@ -101,7 +108,9 @@ public class CustomerMainFrame extends JFrame {
     }
     
     private JPanel createAccountsPanel() {
-        JPanel panel = new JPanel(new BorderLayout());
+        JPanel panel = new JPanel(new BorderLayout(15, 15));
+        panel.setBackground(new Color(240, 242, 245));
+        panel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
         
         // Account table
         String[] columnNames = {"Account Number", "Account Type", "Balance", "Status", "Created Date"};
@@ -113,16 +122,25 @@ public class CustomerMainFrame extends JFrame {
         };
         accountTable = new JTable(accountTableModel);
         accountTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        accountTable.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        accountTable.setRowHeight(35);
+        accountTable.getTableHeader().setFont(new Font("Segoe UI", Font.BOLD, 15));
+        accountTable.getTableHeader().setBackground(new Color(41, 128, 185));
+        accountTable.getTableHeader().setForeground(Color.WHITE);
+        accountTable.setSelectionBackground(new Color(52, 152, 219));
+        accountTable.setSelectionForeground(Color.WHITE);
         
         JScrollPane scrollPane = new JScrollPane(accountTable);
-        scrollPane.setBorder(BorderFactory.createTitledBorder("My Accounts"));
+        scrollPane.setBorder(BorderFactory.createLineBorder(new Color(189, 195, 199), 2));
         
-        // Button panel
-        JPanel buttonPanel = new JPanel(new FlowLayout());
-        JButton depositButton = new JButton("Deposit");
-        JButton withdrawButton = new JButton("Withdraw");
-        JButton viewTransactionsButton = new JButton("View Transactions");
-        JButton refreshButton = new JButton("Refresh");
+        // Button panel with modern styling
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 15));
+        buttonPanel.setBackground(new Color(240, 242, 245));
+        
+        JButton depositButton = createModernButton("💰 Deposit", new Color(46, 204, 113), new Color(39, 174, 96));
+        JButton withdrawButton = createModernButton("💵 Withdraw", new Color(231, 76, 60), new Color(192, 57, 43));
+        JButton viewTransactionsButton = createModernButton("📋 View Transactions", new Color(52, 152, 219), new Color(41, 128, 185));
+        JButton refreshButton = createModernButton("🔄 Refresh", new Color(155, 89, 182), new Color(142, 68, 173));
         
         depositButton.addActionListener(e -> performDeposit());
         withdrawButton.addActionListener(e -> performWithdrawal());
@@ -140,8 +158,33 @@ public class CustomerMainFrame extends JFrame {
         return panel;
     }
     
+    private JButton createModernButton(String text, Color bgColor, Color hoverColor) {
+        JButton button = new JButton(text);
+        button.setFont(new Font("Segoe UI", Font.BOLD, 16));
+        button.setPreferredSize(new Dimension(200, 50));
+        button.setBackground(bgColor);
+        button.setForeground(Color.WHITE);
+        button.setFocusPainted(false);
+        button.setBorderPainted(false);
+        button.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        
+        // Hover effect
+        button.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                button.setBackground(hoverColor);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                button.setBackground(bgColor);
+            }
+        });
+        
+        return button;
+    }
+    
     private JPanel createTransactionsPanel() {
-        JPanel panel = new JPanel(new BorderLayout());
+        JPanel panel = new JPanel(new BorderLayout(15, 15));
+        panel.setBackground(new Color(240, 242, 245));
+        panel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
         
         // Transaction table
         String[] columnNames = {"Transaction ID", "Account", "Type", "Amount", "Balance After", "Date", "Description"};
@@ -152,20 +195,27 @@ public class CustomerMainFrame extends JFrame {
             }
         };
         transactionTable = new JTable(transactionTableModel);
+        transactionTable.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        transactionTable.setRowHeight(35);
+        transactionTable.getTableHeader().setFont(new Font("Segoe UI", Font.BOLD, 15));
+        transactionTable.getTableHeader().setBackground(new Color(41, 128, 185));
+        transactionTable.getTableHeader().setForeground(Color.WHITE);
+        transactionTable.setSelectionBackground(new Color(52, 152, 219));
+        transactionTable.setSelectionForeground(Color.WHITE);
         
         JScrollPane scrollPane = new JScrollPane(transactionTable);
-        scrollPane.setBorder(BorderFactory.createTitledBorder("Transaction History"));
+        scrollPane.setBorder(BorderFactory.createLineBorder(new Color(189, 195, 199), 2));
         
-        // Filter panel
-        JPanel filterPanel = new JPanel(new FlowLayout());
-        JTextField thresholdField = new JTextField(10);
-        JButton filterButton = new JButton("Filter High Value (>₹10,000)");
-        JButton showAllButton = new JButton("Show All");
+        // Filter panel with modern styling
+        JPanel filterPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 15));
+        filterPanel.setBackground(new Color(240, 242, 245));
+        
+        JButton filterButton = createModernButton("💎 Filter High Value (>₹10,000)", new Color(230, 126, 34), new Color(211, 84, 0));
+        JButton showAllButton = createModernButton("📋 Show All", new Color(52, 152, 219), new Color(41, 128, 185));
         
         filterButton.addActionListener(e -> filterHighValueTransactions());
         showAllButton.addActionListener(e -> refreshTransactionData());
         
-        filterPanel.add(new JLabel("High Value Transactions:"));
         filterPanel.add(filterButton);
         filterPanel.add(showAllButton);
         
@@ -177,42 +227,74 @@ public class CustomerMainFrame extends JFrame {
     
     private JPanel createTransferPanel() {
         JPanel panel = new JPanel(new GridBagLayout());
+        panel.setBackground(new Color(240, 242, 245));
         GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(10, 10, 10, 10);
+        gbc.insets = new Insets(15, 15, 15, 15);
         
         JComboBox<String> fromAccountCombo = new JComboBox<>();
+        fromAccountCombo.setFont(new Font("Segoe UI", Font.PLAIN, 16));
+        fromAccountCombo.setPreferredSize(new Dimension(350, 45));
+        
         JTextField toAccountField = new JTextField(20);
+        toAccountField.setFont(new Font("Segoe UI", Font.PLAIN, 16));
+        toAccountField.setPreferredSize(new Dimension(350, 45));
+        
         JTextField amountField = new JTextField(20);
+        amountField.setFont(new Font("Segoe UI", Font.PLAIN, 16));
+        amountField.setPreferredSize(new Dimension(350, 45));
+        
         JTextField descriptionField = new JTextField(20);
-        JButton transferButton = new JButton("Transfer Funds");
+        descriptionField.setFont(new Font("Segoe UI", Font.PLAIN, 16));
+        descriptionField.setPreferredSize(new Dimension(350, 45));
+        
+        JButton transferButton = createModernButton("💸 Transfer Funds", new Color(46, 204, 113), new Color(39, 174, 96));
+        transferButton.setPreferredSize(new Dimension(350, 55));
+        
         JTextArea resultArea = new JTextArea(10, 40);
         resultArea.setEditable(false);
+        resultArea.setFont(new Font("Segoe UI", Font.PLAIN, 15));
+        resultArea.setBackground(new Color(236, 240, 241));
+        resultArea.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createLineBorder(new Color(189, 195, 199), 2),
+            BorderFactory.createEmptyBorder(10, 10, 10, 10)
+        ));
         
         // Populate from account combo
         loadAccountsIntoCombo(fromAccountCombo);
         
-        gbc.gridx = 0; gbc.gridy = 0;
-        panel.add(new JLabel("From Account:"), gbc);
-        gbc.gridx = 1;
+        Font labelFont = new Font("Segoe UI", Font.BOLD, 16);
+        
+        gbc.gridx = 0; gbc.gridy = 0; gbc.anchor = GridBagConstraints.EAST;
+        JLabel fromLabel = new JLabel("💳 From Account:");
+        fromLabel.setFont(labelFont);
+        panel.add(fromLabel, gbc);
+        gbc.gridx = 1; gbc.anchor = GridBagConstraints.WEST;
         panel.add(fromAccountCombo, gbc);
         
-        gbc.gridx = 0; gbc.gridy = 1;
-        panel.add(new JLabel("To Account Number:"), gbc);
-        gbc.gridx = 1;
+        gbc.gridx = 0; gbc.gridy = 1; gbc.anchor = GridBagConstraints.EAST;
+        JLabel toLabel = new JLabel("🎯 To Account Number:");
+        toLabel.setFont(labelFont);
+        panel.add(toLabel, gbc);
+        gbc.gridx = 1; gbc.anchor = GridBagConstraints.WEST;
         panel.add(toAccountField, gbc);
         
-        gbc.gridx = 0; gbc.gridy = 2;
-        panel.add(new JLabel("Amount:"), gbc);
-        gbc.gridx = 1;
+        gbc.gridx = 0; gbc.gridy = 2; gbc.anchor = GridBagConstraints.EAST;
+        JLabel amountLabel = new JLabel("💰 Amount:");
+        amountLabel.setFont(labelFont);
+        panel.add(amountLabel, gbc);
+        gbc.gridx = 1; gbc.anchor = GridBagConstraints.WEST;
         panel.add(amountField, gbc);
         
-        gbc.gridx = 0; gbc.gridy = 3;
-        panel.add(new JLabel("Description:"), gbc);
-        gbc.gridx = 1;
+        gbc.gridx = 0; gbc.gridy = 3; gbc.anchor = GridBagConstraints.EAST;
+        JLabel descLabel = new JLabel("📝 Description:");
+        descLabel.setFont(labelFont);
+        panel.add(descLabel, gbc);
+        gbc.gridx = 1; gbc.anchor = GridBagConstraints.WEST;
         panel.add(descriptionField, gbc);
         
         gbc.gridx = 0; gbc.gridy = 4;
         gbc.gridwidth = 2;
+        gbc.anchor = GridBagConstraints.CENTER;
         panel.add(transferButton, gbc);
         
         gbc.gridy = 5;
@@ -226,18 +308,19 @@ public class CustomerMainFrame extends JFrame {
     
     private JPanel createServicesPanel() {
         JPanel panel = new JPanel(new GridBagLayout());
+        panel.setBackground(new Color(240, 242, 245));
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.insets = new Insets(20, 20, 20, 20);
         
-        JButton requestAccountButton = new JButton("Request New Account");
-        JButton downloadStatementButton = new JButton("Download Statement");
-        JButton changePasswordButton = new JButton("Change Password");
-        JButton contactSupportButton = new JButton("Contact Support");
+        JButton requestAccountButton = createModernButton("➕ Request New Account", new Color(46, 204, 113), new Color(39, 174, 96));
+        JButton downloadStatementButton = createModernButton("📄 Download Statement", new Color(52, 152, 219), new Color(41, 128, 185));
+        JButton changePasswordButton = createModernButton("🔐 Change Password", new Color(230, 126, 34), new Color(211, 84, 0));
+        JButton contactSupportButton = createModernButton("📞 Contact Support", new Color(155, 89, 182), new Color(142, 68, 173));
         
-        requestAccountButton.setPreferredSize(new Dimension(200, 40));
-        downloadStatementButton.setPreferredSize(new Dimension(200, 40));
-        changePasswordButton.setPreferredSize(new Dimension(200, 40));
-        contactSupportButton.setPreferredSize(new Dimension(200, 40));
+        requestAccountButton.setPreferredSize(new Dimension(300, 60));
+        downloadStatementButton.setPreferredSize(new Dimension(300, 60));
+        changePasswordButton.setPreferredSize(new Dimension(300, 60));
+        contactSupportButton.setPreferredSize(new Dimension(300, 60));
         
         requestAccountButton.addActionListener(e -> requestNewAccount());
         downloadStatementButton.addActionListener(e -> downloadStatement());
@@ -651,7 +734,7 @@ public class CustomerMainFrame extends JFrame {
         if (choice == JOptionPane.YES_OPTION) {
             authService.logout();
             dispose();
-            new LoginFrame().setVisible(true);
+            new ModernLoginFrame().setVisible(true);
         }
     }
     

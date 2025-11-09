@@ -1,5 +1,4 @@
 import database.DatabaseManager;
-import gui.LoginFrame;
 
 import javax.swing.*;
 import java.util.logging.Logger;
@@ -43,9 +42,9 @@ public class BankingApplication {
                 DatabaseManager.initializeDatabase();
                 logger.info("Database initialized successfully");
                 
-                // Launch login window
+                // Launch modern login window
                 logger.info("Starting Banking Application GUI...");
-                new LoginFrame().setVisible(true);
+                new gui.ModernLoginFrame().setVisible(true);
                 logger.info("Banking Application started successfully");
                 
             } catch (Exception e) {
